@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Veículo</title>
+    <script type="text/javascript">
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Editar Veículo</h1>
+        <form th:action="@{/vehicles/edit/{id}(id=${vehicle.id})}" th:object="${vehicle}" method="post">
+            <input type="hidden" th:field="*{id}" />
+            <div class="form-group">
+                <label for="brand">Marca:</label>
+                <input type="text" id="brand" class="form-control" th:field="*{brand}" required>
+            </div>
+            <div class="form-group">
+                <label for="model">Modelo:</label>
+                <input type="text" id="model" class="form-control" th:field="*{model}" required>
+            </div>
+            <div class="form-group">
+                <label for="licensePlate">Placa:</label>
+                <input type="text" id="licensePlate" class="form-control" th:field="*{licensePlate}" required>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" id="available" class="form-check-input" th:field="*{available}">
+                <label for="available" class="form-check-label">Disponível</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+        <a th:href="@{/vehicles/manage}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
