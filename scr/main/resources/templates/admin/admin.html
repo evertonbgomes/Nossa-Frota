@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <script type="text/javascript">
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" th:with="pendingStatus=${T(com.progweb.frota.model.TripRequest.TripStatus).PENDENTE.toString()}, 
+                                    acceptedStatus=${T(com.progweb.frota.model.TripRequest.TripStatus).ACEITA.toString()},
+                                    completedStatus=${T(com.progweb.frota.model.TripRequest.TripStatus).CONCLUIDA.toString()}">
+        <h1 class="mt-5">Dashboard</h1>
+        <div class="mb-3">
+            <a th:href="@{/vehicles/add}" class="btn btn-primary">Adicionar Veículo</a>
+            <a th:href="@{/vehicles/manage}" class="btn btn-secondary">Gerenciar Veículos</a>
+            <a th:href="@{/users/add}" class="btn btn-primary">Adicionar Usuário</a>
+            <a th:href="@{/users/manage}" class="btn btn-secondary">Gerenciar Usuários</a>
+        </div>
+        <h2>Veículos Disponíveis</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Modelo</th>
+                    <th>Placa</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="vehicle : ${availableVehicles}">
+                    <td th:text="${vehicle.id}"></td>
+                    <td th:text="${vehicle.model}"></td>
+                    <td th:text="${vehicle.licensePlate}"></td>
+                    <td>
+                        <a th:href="@{/vehicles/edit/{id}(id=${vehicle.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/vehicles/delete/{id}(id=${vehicle.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Requisições de Viagens Pendentes</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}"th:if="${tripRequest.status.toString() == pendingStatus}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${tripRequest.status}"></td>
+                    <td>
+                        <a th:href="@{/admin/accept/{id}(id=${tripRequest.id})}" class="btn btn-success btn-sm">Aceitar</a>
+                        <a th:href="@{/admin/reject/{id}(id=${tripRequest.id})}" class="btn btn-secondary btn-sm">Rejeitar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Requisições de Viagens Aceitas</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}"th:if="${tripRequest.status.toString() == acceptedStatus}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${tripRequest.status}"></td>
+                    <td>
+                        <a th:href="@{/admin/complete/{id}(id=${tripRequest.id})}" class="btn btn-info btn-sm">Concluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Requisições de Viagens Concluídas</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}"th:if="${tripRequest.status.toString() == completedStatus}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${tripRequest.status}"></td>
+                    <td>                        
+                         <a th:href="@{/trip-requests/delete/{id}(id=${tripRequest.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <button class="btn btn-secondary mt-3" onclick="goBack()">Voltar</button>
+    <a th:href="@{/trip-requests/manage}" class="btn btn-primary mt-3">Ver Todas Requisições</a>
+    </div>
+    
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
