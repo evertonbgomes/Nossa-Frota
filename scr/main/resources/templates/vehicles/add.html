@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Adicionar Veículo</title>
+    <script type="text/javascript">
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Adicionar Veículo</h1>
+        <form th:action="@{/vehicles/add}" th:object="${vehicle}" method="post">
+            <div class="form-group">
+                <label for="brand">Marca:</label>
+                <input type="text" id="brand" class="form-control" th:field="*{brand}" required>
+            </div>
+            <div class="form-group">
+                <label for="model">Modelo:</label>
+                <input type="text" id="model" class="form-control" th:field="*{model}" required>
+            </div>
+            <div class="form-group">
+                <label for="licensePlate">Placa:</label>
+                <input type="text" id="licensePlate" class="form-control" th:field="*{licensePlate}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+        </form>
+        <button class="btn btn-secondary mt-3" onclick="goBack()">Voltar</button>   
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
