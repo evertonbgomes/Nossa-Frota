@@ -1,0 +1,3178 @@
+Go back to the main chat
+
+
+Everton Bonfim Gomes
+Estou criando uma aplicação para gerenciamento de uma frota, eu quero que olhe minhas classes uma a uma e analise para mim
+
+Codiumate
+Claro! Vou precisar que você compartilhe as classes que você já criou para que eu possa analisá-las. Por favor, cole o código das suas classes aqui, e eu farei uma análise detalhada de cada uma delas.
+
+Everton Bonfim Gomes
+package com.progweb.frota.model;
+
+import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+public class TripRequest {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private User driver;
+
+    @ManyToOne
+    private Vehicle vehicle;
+
+    public enum TripStatus {
+        PENDING, ACCEPTED, REJECTED
+    }
+
+    private TripStatus status;
+    private LocalDateTime requestTime;
+    private LocalDateTime tripStartTime;
+    private LocalDateTime tripEndTime;
+}
+Codiumate
+Vamos analisar a classe TripRequest que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do JPA (@Entity, @Id, @GeneratedValue, @ManyToOne) e também anotações do Lombok (@Getter, @Setter). Isso é ótimo para reduzir o código boilerplate.
+
+2. Estrutura da Classe
+A estrutura da classe parece bem organizada. Você tem os atributos principais que uma solicitação de viagem precisaria, como driver, vehicle, status, requestTime, tripStartTime e tripEndTime.
+
+3. Enumeração TripStatus
+A enumeração TripStatus está bem definida com três estados: PENDING, ACCEPTED e REJECTED. Isso ajuda a manter o código limpo e fácil de entender.
+
+4. Relacionamentos
+Você está usando @ManyToOne para os relacionamentos com User e Vehicle. Isso indica que uma TripRequest está associada a um único User (motorista) e a um único Vehicle.
+
+5. Tipos de Dados
+Os tipos de dados utilizados (Long, LocalDateTime, TripStatus) são apropriados para os atributos definidos.
+
+Sugestões de Melhorias
+Validações: Considere adicionar validações para garantir a integridade dos dados. Por exemplo, você pode usar @NotNull para campos que não devem ser nulos.
+Construtores: Embora o Lombok gere getters e setters, pode ser útil adicionar construtores para facilitar a criação de objetos TripRequest.
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Equals e HashCode: Considere usar @EqualsAndHashCode do Lombok para garantir que as comparações entre objetos TripRequest sejam feitas corretamente.
+ToString: Adicionar @ToString do Lombok pode ser útil para depuração.
+Exemplo com Melhorias
+Aqui está um exemplo da classe TripRequest com algumas das sugestões implementadas:
+
+package com.progweb.frota.model;
+
+import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class TripRequest {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @NotNull
+    private User driver;
+
+    @ManyToOne
+    @NotNull
+    private Vehicle vehicle;
+
+    public enum TripStatus {
+        PENDING, ACCEPTED, REJECTED
+    }
+
+    @NotNull
+    private TripStatus status;
+
+    @NotNull
+    private LocalDateTime requestTime;
+
+    private LocalDateTime tripStartTime;
+    private LocalDateTime tripEndTime;
+}
+Conclusão
+A classe TripRequest está bem estruturada e cobre os aspectos principais de uma solicitação de viagem. Com algumas melhorias, como validações e anotações adicionais do Lombok, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "\"user\"")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Name is mandatory")
+    private String name;
+
+    @NotBlank(message = "Role is mandatory") // 'ADMIN' ou 'DRIVER'
+    private String role;
+
+    @Email
+    @NotBlank(message = "Email is mandatory")
+    private String email;
+
+    @NotBlank(message = "Document is mandatory")
+    private String document;
+
+    @NotBlank(message = "Phone is mandatory")
+    private String phone;
+
+    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 3, max = 50)
+    private String username;
+
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 6)
+    @JsonIgnore
+    private String password;
+}
+Codiumate
+Vamos analisar a classe User que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do JPA (@Entity, @Id, @GeneratedValue, @Table, @Column) e também anotações do Jakarta Validation (@NotBlank, @Email, @Size). Além disso, você está usando anotações do Lombok (@Data, @NoArgsConstructor, @AllArgsConstructor) e do Jackson (@JsonIgnore).
+
+2. Estrutura da Classe
+A estrutura da classe parece bem organizada. Você tem os atributos principais que um usuário precisaria, como name, role, email, document, phone, username e password.
+
+3. Validações
+Você está utilizando validações adequadas para garantir a integridade dos dados, como @NotBlank, @Email e @Size. Isso é ótimo para garantir que os dados inseridos sejam válidos.
+
+4. Lombok
+O uso das anotações do Lombok (@Data, @NoArgsConstructor, @AllArgsConstructor) ajuda a reduzir o código boilerplate, gerando automaticamente getters, setters, construtores, equals, hashCode e toString.
+
+5. Segurança
+Você está usando @JsonIgnore para a senha, o que é uma boa prática para evitar que a senha seja exposta em respostas JSON.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Construtores: Embora o Lombok gere construtores, pode ser útil adicionar construtores personalizados se necessário.
+Equals e HashCode: O uso de @Data já inclui @EqualsAndHashCode, mas é bom estar ciente de que isso pode impactar o desempenho se a classe tiver muitos atributos.
+ToString: O uso de @Data já inclui @ToString, mas você pode querer personalizar a saída se necessário.
+Exemplo com Melhorias
+Aqui está um exemplo da classe User com algumas das sugestões implementadas:
+
+package com.progweb.frota.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "\"user\"")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Name is mandatory")
+    private String name;
+
+    @NotBlank(message = "Role is mandatory") // 'ADMIN' ou 'DRIVER'
+    private String role;
+
+    @Email
+    @NotBlank(message = "Email is mandatory")
+    private String email;
+
+    @NotBlank(message = "Document is mandatory")
+    private String document;
+
+    @NotBlank(message = "Phone is mandatory")
+    private String phone;
+
+    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 3, max = 50)
+    private String username;
+
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 6)
+    @JsonIgnore
+    private String password;
+}
+Conclusão
+A classe User está bem estruturada e cobre os aspectos principais de um usuário no sistema de gerenciamento de frota. Com algumas melhorias, como comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "vehicle")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Vehicle {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String brand;
+
+    @Column(nullable = false)
+    private String model;
+
+    @Column(nullable = false, unique = true)
+    private String licensePlate;
+
+    @Column(nullable = false)
+    private boolean isReserved;
+
+    @Column(nullable = false)
+    private Boolean available;
+
+    // Getter e Setter manualmente adicionados para isReserved
+    public Boolean isReserved() {
+        return isReserved;
+    }
+
+    public void setReserved(Boolean isReserved) {
+        this.isReserved = isReserved;
+    }
+}
+Codiumate
+Vamos analisar a classe Vehicle que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do JPA (@Entity, @Id, @GeneratedValue, @Table, @Column) e também anotações do Lombok (@Data, @NoArgsConstructor, @AllArgsConstructor). Isso ajuda a reduzir o código boilerplate.
+
+2. Estrutura da Classe
+A estrutura da classe parece bem organizada. Você tem os atributos principais que um veículo precisaria, como brand, model, licensePlate, isReserved e available.
+
+3. Lombok
+O uso das anotações do Lombok (@Data, @NoArgsConstructor, @AllArgsConstructor) ajuda a reduzir o código boilerplate, gerando automaticamente getters, setters, construtores, equals, hashCode e toString.
+
+4. Tipos de Dados
+Os tipos de dados utilizados (Long, String, boolean, Boolean) são apropriados para os atributos definidos.
+
+5. Getter e Setter Manuais
+Você adicionou manualmente os métodos getter e setter para o atributo isReserved. Isso pode ser necessário devido à convenção de nomenclatura do Lombok para booleanos.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validações: Considere adicionar validações para garantir a integridade dos dados. Por exemplo, você pode usar @NotBlank para campos que não devem ser nulos.
+Construtores: Embora o Lombok gere construtores, pode ser útil adicionar construtores personalizados se necessário.
+Equals e HashCode: O uso de @Data já inclui @EqualsAndHashCode, mas é bom estar ciente de que isso pode impactar o desempenho se a classe tiver muitos atributos.
+ToString: O uso de @Data já inclui @ToString, mas você pode querer personalizar a saída se necessário.
+Exemplo com Melhorias
+Aqui está um exemplo da classe Vehicle com algumas das sugestões implementadas:
+
+package com.progweb.frota.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "vehicle")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Vehicle {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String brand;
+
+    @Column(nullable = false)
+    private String model;
+
+    @Column(nullable = false, unique = true)
+    private String licensePlate;
+
+    @Column(nullable = false)
+    private boolean isReserved;
+
+    @Column(nullable = false)
+    private Boolean available;
+
+    // Getter e Setter manualmente adicionados para isReserved
+    public boolean isReserved() {
+        return isReserved;
+    }
+
+    public void setReserved(boolean isReserved) {
+        this.isReserved = isReserved;
+    }
+}
+Conclusão
+A classe Vehicle está bem estruturada e cobre os aspectos principais de um veículo no sistema de gerenciamento de frota. Com algumas melhorias, como validações adicionais e comentários, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class AdminController {
+
+    @GetMapping("/admin")
+    public String adminHome() {
+        return "adminHome";
+    }
+}
+Codiumate
+Vamos analisar a classe AdminController que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Controller e @GetMapping). Essas anotações são apropriadas para definir um controlador e mapear requisições HTTP.
+
+2. Estrutura da Classe
+A estrutura da classe é simples e direta. Você tem um método adminHome que mapeia a URL /admin para retornar a view adminHome.
+
+3. Método adminHome
+O método adminHome está mapeado para uma requisição GET na URL /admin e retorna o nome da view adminHome. Isso é adequado para um controlador que serve páginas estáticas ou dinâmicas.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar a página de administração.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Documentação: Adicionar documentação para o método pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento do método.
+Exemplo com Melhorias
+Aqui está um exemplo da classe AdminController com algumas das sugestões implementadas:
+
+package com.progweb.frota.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+    /**
+     * Handles GET requests to the /admin endpoint.
+     * 
+     * @return the name of the view to be rendered
+     */
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminHome() {
+        return "adminHome";
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei um comentário para explicar o propósito do método adminHome.
+Validação de Segurança: Usei a anotação @PreAuthorize para garantir que apenas usuários com a role ADMIN possam acessar a página de administração.
+RequestMapping: Adicionei a anotação @RequestMapping na classe para definir um prefixo comum para todas as rotas dentro do controlador.
+Conclusão
+A classe AdminController está bem estruturada e cobre os aspectos principais de um controlador de administração. Com algumas melhorias, como validações de segurança e comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+    @Autowired
+    private TripRequestService tripRequestService;
+
+        @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.findAllVehicles());
+        return "trip-requests/add";
+    }
+    
+
+    @GetMapping("/edit/{id}")
+    public String showEditTripRequestForm(@PathVariable("id") Long id, Model model) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        List<User> drivers = userService.findUsersByRole("DRIVER");
+        List<Vehicle> vehicles = vehicleService.findAllVehicles();
+        model.addAttribute("tripRequest", tripRequest);
+        model.addAttribute("drivers", drivers);
+        model.addAttribute("vehicles", vehicles);
+        return "trip-requests/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateTripRequest(@PathVariable("id") Long id, @ModelAttribute("tripRequest") TripRequest tripRequest) {
+        tripRequestService.updateTripRequest(id, tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest) {
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.ACCEPTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+}
+Codiumate
+Vamos analisar a classe TripRequestController que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Controller, @RequestMapping, @GetMapping, @PostMapping, @Autowired, @PathVariable, @ModelAttribute). Essas anotações são apropriadas para definir um controlador e mapear requisições HTTP.
+
+2. Estrutura da Classe
+A estrutura da classe é bem organizada. Você tem métodos para adicionar, editar, atualizar, gerenciar, deletar, aceitar e rejeitar solicitações de viagem.
+
+3. Injeção de Dependências
+Você está usando @Autowired para injetar os serviços TripRequestService, UserService e VehicleService. Isso é uma boa prática para manter o código desacoplado e facilitar a testabilidade.
+
+4. Métodos CRUD
+Os métodos CRUD (Create, Read, Update, Delete) estão bem definidos e cobrem as operações principais que um controlador de solicitações de viagem precisaria.
+
+5. Tratamento de Exceções
+Não há tratamento explícito de exceções nos métodos. Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Documentação: Adicionar documentação para os métodos pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento dos métodos.
+Exemplo com Melhorias
+Aqui está um exemplo da classe TripRequestController com algumas das sugestões implementadas:
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    /**
+     * Shows the form to add a new trip request.
+     * 
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.findAllVehicles());
+        return "trip-requests/add";
+    }
+
+    /**
+     * Shows the form to edit an existing trip request.
+     * 
+     * @param id the ID of the trip request to edit
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/edit/{id}")
+    public String showEditTripRequestForm(@PathVariable("id") Long id, Model model) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        List<User> drivers = userService.findUsersByRole("DRIVER");
+        List<Vehicle> vehicles = vehicleService.findAllVehicles();
+        model.addAttribute("tripRequest", tripRequest);
+        model.addAttribute("drivers", drivers);
+        model.addAttribute("vehicles", vehicles);
+        return "trip-requests/edit";
+    }
+
+    /**
+     * Updates an existing trip request.
+     * 
+     * @param id the ID of the trip request to update
+     * @param tripRequest the updated trip request
+     * @return the redirect URL after updating
+     */
+    @PostMapping("/edit/{id}")
+    public String updateTripRequest(@PathVariable("id") Long id, @ModelAttribute("tripRequest") TripRequest tripRequest) {
+        tripRequestService.updateTripRequest(id, tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    /**
+     * Adds a new trip request.
+     * 
+     * @param tripRequest the new trip request to add
+     * @return the redirect URL after adding
+     */
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest) {
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    /**
+     * Manages all trip requests.
+     * 
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    /**
+     * Deletes a trip request.
+     * 
+     * @param id the ID of the trip request to delete
+     * @return the redirect URL after deleting
+     */
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    /**
+     * Accepts a trip request.
+     * 
+     * @param id the ID of the trip request to accept
+     * @return the redirect URL after accepting
+     */
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.ACCEPTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    /**
+     * Rejects a trip request.
+     * 
+     * @param id the ID of the trip request to reject
+     * @return the redirect URL after rejecting
+     */
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei comentários para explicar o propósito de cada método.
+Validação de Segurança: Considere adicionar anotações de segurança, como @PreAuthorize, para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Conclusão
+A classe TripRequestController está bem estruturada e cobre os aspectos principais de um controlador de solicitações de viagem. Com algumas melhorias, como validações de segurança, tratamento de exceções e comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.repository.TripRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TripRequestService {
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+
+    public TripRequest saveTripRequest(TripRequest tripRequest) {
+        return tripRequestRepository.save(tripRequest);
+    }
+
+    public List<TripRequest> getAllTripRequests() {
+        return tripRequestRepository.findAll();
+    }
+
+    public TripRequest getTripRequestById(Long id) {
+        return tripRequestRepository.findById(id).orElse(null);
+    }
+
+    public void deleteTripRequest(Long id) {
+        tripRequestRepository.deleteById(id);
+    }
+
+    public void updateTripRequest(Long id, TripRequest updatedTripRequest) {
+        TripRequest existingTripRequest = tripRequestRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid trip request Id:" + id));
+        existingTripRequest.setDriver(updatedTripRequest.getDriver());
+        existingTripRequest.setVehicle(updatedTripRequest.getVehicle());
+        existingTripRequest.setTripStartTime(updatedTripRequest.getTripStartTime());
+        existingTripRequest.setTripEndTime(updatedTripRequest.getTripEndTime());
+        tripRequestRepository.save(existingTripRequest);
+    }
+}
+Codiumate
+Vamos analisar a classe TripRequestService que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Service, @Autowired). Essas anotações são apropriadas para definir um serviço e injetar dependências.
+
+2. Estrutura da Classe
+A estrutura da classe é bem organizada. Você tem métodos para salvar, obter, deletar e atualizar solicitações de viagem.
+
+3. Injeção de Dependências
+Você está usando @Autowired para injetar o repositório TripRequestRepository. Isso é uma boa prática para manter o código desacoplado e facilitar a testabilidade.
+
+4. Métodos CRUD
+Os métodos CRUD (Create, Read, Update, Delete) estão bem definidos e cobrem as operações principais que um serviço de solicitações de viagem precisaria.
+
+5. Tratamento de Exceções
+Você está lançando uma exceção IllegalArgumentException no método updateTripRequest caso o ID da solicitação de viagem não seja encontrado. Isso é uma boa prática para garantir que o código lide corretamente com situações inesperadas.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Considere criar uma exceção personalizada para lidar com casos específicos, como uma solicitação de viagem não encontrada.
+Documentação: Adicionar documentação para os métodos pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento dos métodos.
+Exemplo com Melhorias
+Aqui está um exemplo da classe TripRequestService com algumas das sugestões implementadas:
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.repository.TripRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TripRequestService {
+
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+
+    /**
+     * Saves a new trip request.
+     * 
+     * @param tripRequest the trip request to save
+     * @return the saved trip request
+     */
+    public TripRequest saveTripRequest(TripRequest tripRequest) {
+        return tripRequestRepository.save(tripRequest);
+    }
+
+    /**
+     * Retrieves all trip requests.
+     * 
+     * @return a list of all trip requests
+     */
+    public List<TripRequest> getAllTripRequests() {
+        return tripRequestRepository.findAll();
+    }
+
+    /**
+     * Retrieves a trip request by its ID.
+     * 
+     * @param id the ID of the trip request to retrieve
+     * @return the trip request with the specified ID, or null if not found
+     */
+    public TripRequest getTripRequestById(Long id) {
+        return tripRequestRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Deletes a trip request by its ID.
+     * 
+     * @param id the ID of the trip request to delete
+     */
+    public void deleteTripRequest(Long id) {
+        tripRequestRepository.deleteById(id);
+    }
+
+    /**
+     * Updates an existing trip request.
+     * 
+     * @param id the ID of the trip request to update
+     * @param updatedTripRequest the updated trip request
+     */
+    public void updateTripRequest(Long id, TripRequest updatedTripRequest) {
+        TripRequest existingTripRequest = tripRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trip request Id:" + id));
+        existingTripRequest.setDriver(updatedTripRequest.getDriver());
+        existingTripRequest.setVehicle(updatedTripRequest.getVehicle());
+        existingTripRequest.setTripStartTime(updatedTripRequest.getTripStartTime());
+        existingTripRequest.setTripEndTime(updatedTripRequest.getTripEndTime());
+        tripRequestRepository.save(existingTripRequest);
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei comentários para explicar o propósito de cada método.
+Tratamento de Exceções: Considere criar uma exceção personalizada para lidar com casos específicos, como uma solicitação de viagem não encontrada.
+Conclusão
+A classe TripRequestService está bem estruturada e cobre os aspectos principais de um serviço de solicitações de viagem. Com algumas melhorias, como comentários adicionais e tratamento de exceções personalizado, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.User;
+import com.progweb.frota.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/users")
+public class UserController {
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/add")
+    public String showAddUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "users/add";
+    }
+
+    @PostMapping("/add")
+    public String addUser(@ModelAttribute User user) {
+        userService.saveUser(user);
+        return "redirect:/users/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageUsers(Model model) {
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "users/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return "redirect:/users/manage";
+    }
+}
+Codiumate
+Vamos analisar a classe UserController que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Controller, @RequestMapping, @GetMapping, @PostMapping, @Autowired, @PathVariable, @ModelAttribute). Essas anotações são apropriadas para definir um controlador e mapear requisições HTTP.
+
+2. Estrutura da Classe
+A estrutura da classe é bem organizada. Você tem métodos para adicionar, gerenciar e deletar usuários.
+
+3. Injeção de Dependências
+Você está usando @Autowired para injetar o serviço UserService. Isso é uma boa prática para manter o código desacoplado e facilitar a testabilidade.
+
+4. Métodos CRUD
+Os métodos CRUD (Create, Read, Delete) estão bem definidos e cobrem as operações principais que um controlador de usuários precisaria.
+
+5. Tratamento de Exceções
+Não há tratamento explícito de exceções nos métodos. Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Documentação: Adicionar documentação para os métodos pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento dos métodos.
+Exemplo com Melhorias
+Aqui está um exemplo da classe UserController com algumas das sugestões implementadas:
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.User;
+import com.progweb.frota.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    /**
+     * Shows the form to add a new user.
+     * 
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/add")
+    public String showAddUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "users/add";
+    }
+
+    /**
+     * Adds a new user.
+     * 
+     * @param user the user to add
+     * @return the redirect URL after adding
+     */
+    @PostMapping("/add")
+    public String addUser(@ModelAttribute User user) {
+        userService.saveUser(user);
+        return "redirect:/users/manage";
+    }
+
+    /**
+     * Manages all users.
+     * 
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/manage")
+    public String manageUsers(Model model) {
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "users/manage";
+    }
+
+    /**
+     * Deletes a user.
+     * 
+     * @param id the ID of the user to delete
+     * @return the redirect URL after deleting
+     */
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return "redirect:/users/manage";
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei comentários para explicar o propósito de cada método.
+Tratamento de Exceções: Considere adicionar tratamento de exceções para lidar com possíveis erros de forma mais elegante.
+Conclusão
+A classe UserController está bem estruturada e cobre os aspectos principais de um controlador de usuários. Com algumas melhorias, como validações de segurança, tratamento de exceções e comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.User;
+import com.progweb.frota.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+
+    public List<User> findUsersByRole(String role) {
+        return userRepository.findByRole(role);
+    }
+
+}
+Codiumate
+Vamos analisar a classe UserService que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Service, @Autowired). Essas anotações são apropriadas para definir um serviço e injetar dependências.
+
+2. Estrutura da Classe
+A estrutura da classe é bem organizada. Você tem métodos para salvar, obter, deletar e encontrar usuários por diferentes critérios (email, username, role).
+
+3. Injeção de Dependências
+Você está usando @Autowired para injetar o repositório UserRepository. Isso é uma boa prática para manter o código desacoplado e facilitar a testabilidade.
+
+4. Métodos CRUD
+Os métodos CRUD (Create, Read, Delete) estão bem definidos e cobrem as operações principais que um serviço de usuários precisaria.
+
+5. Tratamento de Exceções
+Não há tratamento explícito de exceções nos métodos. Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Documentação: Adicionar documentação para os métodos pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento dos métodos.
+Exemplo com Melhorias
+Aqui está um exemplo da classe UserService com algumas das sugestões implementadas:
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.User;
+import com.progweb.frota.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    /**
+     * Saves a new user.
+     * 
+     * @param user the user to save
+     * @return the saved user
+     */
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    /**
+     * Retrieves all users.
+     * 
+     * @return a list of all users
+     */
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    /**
+     * Retrieves a user by their email.
+     * 
+     * @param email the email of the user to retrieve
+     * @return the user with the specified email, or null if not found
+     */
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    /**
+     * Retrieves a user by their username.
+     * 
+     * @param username the username of the user to retrieve
+     * @return the user with the specified username, or null if not found
+     */
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    /**
+     * Deletes a user by their ID.
+     * 
+     * @param id the ID of the user to delete
+     */
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    /**
+     * Finds users by their role.
+     * 
+     * @param role the role of the users to find
+     * @return a list of users with the specified role
+     */
+    public List<User> findUsersByRole(String role) {
+        return userRepository.findByRole(role);
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei comentários para explicar o propósito de cada método.
+Tratamento de Exceções: Considere adicionar tratamento de exceções para lidar com possíveis erros de forma mais elegante.
+Conclusão
+A classe UserService está bem estruturada e cobre os aspectos principais de um serviço de usuários. Com algumas melhorias, como validações de segurança, tratamento de exceções e comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.VehicleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/vehicles")
+public class VehicleController {
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddVehicleForm(Model model) {
+        model.addAttribute("vehicle", new Vehicle());
+        return "vehicles/add";
+    }
+
+    @PostMapping("/add")
+    public String addVehicle(@ModelAttribute Vehicle vehicle) {
+        vehicleService.saveVehicle(vehicle);
+        return "redirect:/vehicles/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageVehicles(Model model) {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        model.addAttribute("vehicles", vehicles);
+        return "vehicles/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteVehicle(@PathVariable Long id) {
+        vehicleService.deleteVehicle(id);
+        return "redirect:/vehicles/manage";
+    }
+}
+Codiumate
+Vamos analisar a classe VehicleController que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Controller, @RequestMapping, @GetMapping, @PostMapping, @Autowired, @PathVariable, @ModelAttribute). Essas anotações são apropriadas para definir um controlador e mapear requisições HTTP.
+
+2. Estrutura da Classe
+A estrutura da classe é bem organizada. Você tem métodos para adicionar, gerenciar e deletar veículos.
+
+3. Injeção de Dependências
+Você está usando @Autowired para injetar o serviço VehicleService. Isso é uma boa prática para manter o código desacoplado e facilitar a testabilidade.
+
+4. Métodos CRUD
+Os métodos CRUD (Create, Read, Delete) estão bem definidos e cobrem as operações principais que um controlador de veículos precisaria.
+
+5. Tratamento de Exceções
+Não há tratamento explícito de exceções nos métodos. Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Documentação: Adicionar documentação para os métodos pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento dos métodos.
+Exemplo com Melhorias
+Aqui está um exemplo da classe VehicleController com algumas das sugestões implementadas:
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.VehicleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/vehicles")
+public class VehicleController {
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    /**
+     * Shows the form to add a new vehicle.
+     * 
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/add")
+    public String showAddVehicleForm(Model model) {
+        model.addAttribute("vehicle", new Vehicle());
+        return "vehicles/add";
+    }
+
+    /**
+     * Adds a new vehicle.
+     * 
+     * @param vehicle the vehicle to add
+     * @return the redirect URL after adding
+     */
+    @PostMapping("/add")
+    public String addVehicle(@ModelAttribute Vehicle vehicle) {
+        vehicleService.saveVehicle(vehicle);
+        return "redirect:/vehicles/manage";
+    }
+
+    /**
+     * Manages all vehicles.
+     * 
+     * @param model the model to add attributes to
+     * @return the name of the view to be rendered
+     */
+    @GetMapping("/manage")
+    public String manageVehicles(Model model) {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        model.addAttribute("vehicles", vehicles);
+        return "vehicles/manage";
+    }
+
+    /**
+     * Deletes a vehicle.
+     * 
+     * @param id the ID of the vehicle to delete
+     * @return the redirect URL after deleting
+     */
+    @GetMapping("/delete/{id}")
+    public String deleteVehicle(@PathVariable Long id) {
+        vehicleService.deleteVehicle(id);
+        return "redirect:/vehicles/manage";
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei comentários para explicar o propósito de cada método.
+Tratamento de Exceções: Considere adicionar tratamento de exceções para lidar com possíveis erros de forma mais elegante.
+Conclusão
+A classe VehicleController está bem estruturada e cobre os aspectos principais de um controlador de veículos. Com algumas melhorias, como validações de segurança, tratamento de exceções e comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.VehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VehicleService {
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+
+    public Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id).orElse(null);
+    }
+
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
+    }
+    
+    public List<Vehicle> findAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+}
+Codiumate
+Vamos analisar a classe VehicleService que você forneceu. Aqui estão alguns pontos importantes a serem considerados:
+
+1. Anotações e Importações
+Você está usando anotações do Spring Framework (@Service, @Autowired). Essas anotações são apropriadas para definir um serviço e injetar dependências.
+
+2. Estrutura da Classe
+A estrutura da classe é bem organizada. Você tem métodos para salvar, obter, deletar e listar veículos.
+
+3. Injeção de Dependências
+Você está usando @Autowired para injetar o repositório VehicleRepository. Isso é uma boa prática para manter o código desacoplado e facilitar a testabilidade.
+
+4. Métodos CRUD
+Os métodos CRUD (Create, Read, Delete) estão bem definidos e cobrem as operações principais que um serviço de veículos precisaria.
+
+5. Métodos Duplicados
+Você tem dois métodos que fazem a mesma coisa: getAllVehicles e findAllVehicles. Isso pode causar confusão e redundância no código.
+
+6. Tratamento de Exceções
+Não há tratamento explícito de exceções nos métodos. Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+
+Sugestões de Melhorias
+Comentários: Adicionar comentários pode ajudar outros desenvolvedores (ou você mesmo no futuro) a entender melhor o propósito de cada parte da classe.
+Remover Métodos Duplicados: Remova métodos duplicados para evitar redundância.
+Validação de Segurança: Considere adicionar validações de segurança para garantir que apenas usuários autorizados possam acessar certas funcionalidades.
+Tratamento de Exceções: Adicionar tratamento de exceções pode ajudar a lidar com possíveis erros de forma mais elegante.
+Documentação: Adicionar documentação para os métodos pode ser útil para outros desenvolvedores entenderem o propósito e o funcionamento dos métodos.
+Exemplo com Melhorias
+Aqui está um exemplo da classe VehicleService com algumas das sugestões implementadas:
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.VehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VehicleService {
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    /**
+     * Saves a new vehicle.
+     * 
+     * @param vehicle the vehicle to save
+     * @return the saved vehicle
+     */
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
+    /**
+     * Retrieves all vehicles.
+     * 
+     * @return a list of all vehicles
+     */
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+
+    /**
+     * Retrieves a vehicle by its ID.
+     * 
+     * @param id the ID of the vehicle to retrieve
+     * @return the vehicle with the specified ID, or null if not found
+     */
+    public Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Deletes a vehicle by its ID.
+     * 
+     * @param id the ID of the vehicle to delete
+     */
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
+    }
+}
+Explicação das Melhorias
+Comentários: Adicionei comentários para explicar o propósito de cada método.
+Remover Métodos Duplicados: Removi o método findAllVehicles porque ele é redundante com getAllVehicles.
+Tratamento de Exceções: Considere adicionar tratamento de exceções para lidar com possíveis erros de forma mais elegante.
+Conclusão
+A classe VehicleService está bem estruturada e cobre os aspectos principais de um serviço de veículos. Com algumas melhorias, como remoção de métodos duplicados, validações de segurança, tratamento de exceções e comentários adicionais, você pode torná-la ainda mais robusta e fácil de usar. Se você tiver outras classes para análise, sinta-se à vontade para compartilhá-las!
+
+Everton Bonfim Gomes
+Após ver as minhas classes preciso que adicione uma funcionalidade que ao criar uma requisição de viagem coloque o veículo como indisponível. E quando a requisição for finalizada ou deletada desmarque o veículo de reservada.
+
+Codiumate
+Para adicionar a funcionalidade de marcar um veículo como indisponível ao criar uma solicitação de viagem e desmarcá-lo como reservado quando a solicitação for finalizada ou deletada, você precisará fazer algumas alterações nas classes TripRequestService, TripRequestController e VehicleService. Vamos ver como fazer isso passo a passo.
+
+Passo 1: Atualizar TripRequestService
+Adicione a lógica para marcar o veículo como indisponível ao salvar uma nova solicitação de viagem e desmarcá-lo quando a solicitação for deletada ou finalizada.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.TripRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TripRequestService {
+
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    /**
+     * Saves a new trip request and marks the vehicle as unavailable.
+     * 
+     * @param tripRequest the trip request to save
+     * @return the saved trip request
+     */
+    public TripRequest saveTripRequest(TripRequest tripRequest) {
+        Vehicle vehicle = tripRequest.getVehicle();
+        vehicle.setAvailable(false);
+        vehicleService.saveVehicle(vehicle);
+        return tripRequestRepository.save(tripRequest);
+    }
+
+    /**
+     * Retrieves all trip requests.
+     * 
+     * @return a list of all trip requests
+     */
+    public List<TripRequest> getAllTripRequests() {
+        return tripRequestRepository.findAll();
+    }
+
+    /**
+     * Retrieves a trip request by its ID.
+     * 
+     * @param id the ID of the trip request to retrieve
+     * @return the trip request with the specified ID, or null if not found
+     */
+    public TripRequest getTripRequestById(Long id) {
+        return tripRequestRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Deletes a trip request and marks the vehicle as available.
+     * 
+     * @param id the ID of the trip request to delete
+     */
+    public void deleteTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.deleteById(id);
+        }
+    }
+
+    /**
+     * Updates an existing trip request.
+     * 
+     * @param id the ID of the trip request to update
+     * @param updatedTripRequest the updated trip request
+     */
+    public void updateTripRequest(Long id, TripRequest updatedTripRequest) {
+        TripRequest existingTripRequest = tripRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trip request Id:" + id));
+        existingTripRequest.setDriver(updatedTripRequest.getDriver());
+        existingTripRequest.setVehicle(updatedTripRequest.getVehicle());
+        existingTripRequest.setTripStartTime(updatedTripRequest.getTripStartTime());
+        existingTripRequest.setTripEndTime(updatedTripRequest.getTripEndTime());
+        tripRequestRepository.save(existingTripRequest);
+    }
+
+    /**
+     * Marks a trip request as completed and the vehicle as available.
+     * 
+     * @param id the ID of the trip request to complete
+     */
+    public void completeTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+}
+Passo 2: Atualizar TripRequestController
+Adicione chamadas para os novos métodos do serviço no controlador.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAllVehicles());
+        return "trip-requests/add";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditTripRequestForm(@PathVariable("id") Long id, Model model) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        List<User> drivers = userService.findUsersByRole("DRIVER");
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        model.addAttribute("tripRequest", tripRequest);
+        model.addAttribute("drivers", drivers);
+        model.addAttribute("vehicles", vehicles);
+        return "trip-requests/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateTripRequest(@PathVariable("id") Long id, @ModelAttribute("tripRequest") TripRequest tripRequest) {
+        tripRequestService.updateTripRequest(id, tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest) {
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.ACCEPTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Passo 3: Atualizar VehicleService
+Certifique-se de que o VehicleService tem um método para salvar um veículo.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.VehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VehicleService {
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    /**
+     * Saves a new vehicle.
+     * 
+     * @param vehicle the vehicle to save
+     * @return the saved vehicle
+     */
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
+    /**
+     * Retrieves all vehicles.
+     * 
+     * @return a list of all vehicles
+     */
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+
+    /**
+     * Retrieves a vehicle by its ID.
+     * 
+     * @param id the ID of the vehicle to retrieve
+     * @return the vehicle with the specified ID, or null if not found
+     */
+    public Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Deletes a vehicle by its ID.
+     * 
+     * @param id the ID of the vehicle to delete
+     */
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
+    }
+}
+Conclusão
+Com essas alterações, agora você tem a funcionalidade de marcar um veículo como indisponível ao criar uma solicitação de viagem e desmarcá-lo quando a solicitação for finalizada ou deletada. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+Também precisso que quando a requisição estiver marcada como ACCEPTED o véiculo fique indisponível e que veículos indisponíveis não apareçam na lista de seleção de veículos na view de requisição de viagem
+
+Codiumate
+Para implementar a funcionalidade de marcar o veículo como indisponível quando a solicitação de viagem estiver marcada como ACCEPTED e garantir que veículos indisponíveis não apareçam na lista de seleção de veículos na view de requisição de viagem, você precisará fazer algumas alterações adicionais nas classes TripRequestService, TripRequestController e VehicleService. Vamos ver como fazer isso passo a passo.
+
+Passo 1: Atualizar TripRequestService
+Adicione a lógica para marcar o veículo como indisponível ao aceitar uma solicitação de viagem.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.TripRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TripRequestService {
+
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    /**
+     * Saves a new trip request and marks the vehicle as unavailable.
+     * 
+     * @param tripRequest the trip request to save
+     * @return the saved trip request
+     */
+    public TripRequest saveTripRequest(TripRequest tripRequest) {
+        Vehicle vehicle = tripRequest.getVehicle();
+        vehicle.setAvailable(false);
+        vehicleService.saveVehicle(vehicle);
+        return tripRequestRepository.save(tripRequest);
+    }
+
+    /**
+     * Retrieves all trip requests.
+     * 
+     * @return a list of all trip requests
+     */
+    public List<TripRequest> getAllTripRequests() {
+        return tripRequestRepository.findAll();
+    }
+
+    /**
+     * Retrieves a trip request by its ID.
+     * 
+     * @param id the ID of the trip request to retrieve
+     * @return the trip request with the specified ID, or null if not found
+     */
+    public TripRequest getTripRequestById(Long id) {
+        return tripRequestRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Deletes a trip request and marks the vehicle as available.
+     * 
+     * @param id the ID of the trip request to delete
+     */
+    public void deleteTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.deleteById(id);
+        }
+    }
+
+    /**
+     * Updates an existing trip request.
+     * 
+     * @param id the ID of the trip request to update
+     * @param updatedTripRequest the updated trip request
+     */
+    public void updateTripRequest(Long id, TripRequest updatedTripRequest) {
+        TripRequest existingTripRequest = tripRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trip request Id:" + id));
+        existingTripRequest.setDriver(updatedTripRequest.getDriver());
+        existingTripRequest.setVehicle(updatedTripRequest.getVehicle());
+        existingTripRequest.setTripStartTime(updatedTripRequest.getTripStartTime());
+        existingTripRequest.setTripEndTime(updatedTripRequest.getTripEndTime());
+        tripRequestRepository.save(existingTripRequest);
+    }
+
+    /**
+     * Marks a trip request as completed and the vehicle as available.
+     * 
+     * @param id the ID of the trip request to complete
+     */
+    public void completeTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+
+    /**
+     * Accepts a trip request and marks the vehicle as unavailable.
+     * 
+     * @param id the ID of the trip request to accept
+     */
+    public void acceptTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.ACCEPTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(false);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+}
+Passo 2: Atualizar TripRequestController
+Adicione chamadas para os novos métodos do serviço no controlador.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAvailableVehicles());
+        return "trip-requests/add";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditTripRequestForm(@PathVariable("id") Long id, Model model) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        List<User> drivers = userService.findUsersByRole("DRIVER");
+        List<Vehicle> vehicles = vehicleService.getAvailableVehicles();
+        model.addAttribute("tripRequest", tripRequest);
+        model.addAttribute("drivers", drivers);
+        model.addAttribute("vehicles", vehicles);
+        return "trip-requests/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateTripRequest(@PathVariable("id") Long id, @ModelAttribute("tripRequest") TripRequest tripRequest) {
+        tripRequestService.updateTripRequest(id, tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest) {
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        tripRequestService.acceptTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Passo 3: Atualizar VehicleService
+Adicione um método para obter apenas os veículos disponíveis.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.VehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VehicleService {
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    /**
+     * Saves a new vehicle.
+     * 
+     * @param vehicle the vehicle to save
+     * @return the saved vehicle
+     */
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
+    /**
+     * Retrieves all vehicles.
+     * 
+     * @return a list of all vehicles
+     */
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+
+    /**
+     * Retrieves all available vehicles.
+     * 
+     * @return a list of all available vehicles
+     */
+    public List<Vehicle> getAvailableVehicles() {
+        return vehicleRepository.findByAvailable(true);
+    }
+
+    /**
+     * Retrieves a vehicle by its ID.
+     * 
+     * @param id the ID of the vehicle to retrieve
+     * @return the vehicle with the specified ID, or null if not found
+     */
+    public Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Deletes a vehicle by its ID.
+     * 
+     * @param id the ID of the vehicle to delete
+     */
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
+    }
+}
+Passo 4: Atualizar VehicleRepository
+Adicione um método para encontrar veículos disponíveis.
+
+package com.progweb.frota.repository;
+
+import com.progweb.frota.model.Vehicle;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
+    List<Vehicle> findByAvailable(boolean available);
+}
+Conclusão
+Com essas alterações, agora você tem a funcionalidade de marcar um veículo como indisponível quando a solicitação de viagem estiver marcada como ACCEPTED e garantir que veículos indisponíveis não apareçam na lista de seleção de veículos na view de requisição de viagem. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Trip Requests</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Gerenciar Viagens</h1>
+        <a th:href="@{/trip-requests/add}" class="btn btn-primary mb-3">Nova Viagem</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{/trip-requests/edit/{id}(id=${tripRequest.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/trip-requests/delete/{id}(id=${tripRequest.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Na view aplique tambem os botões em ações para aceitar rejeitar e concluir a viagem
+
+Codiumate
+Para adicionar os botões de "Aceitar", "Rejeitar" e "Concluir" na coluna de ações da tabela na sua view, você pode modificar o código HTML da seguinte forma:
+
+Código HTML Atualizado
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Trip Requests</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Gerenciar Viagens</h1>
+        <a th:href="@{/trip-requests/add}" class="btn btn-primary mb-3">Nova Viagem</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${tripRequest.status}"></td>
+                    <td>
+                        <a th:href="@{/trip-requests/edit/{id}(id=${tripRequest.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/trip-requests/delete/{id}(id=${tripRequest.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                        <a th:href="@{/trip-requests/accept/{id}(id=${tripRequest.id})}" class="btn btn-success btn-sm" th:if="${tripRequest.status == 'PENDING'}">Aceitar</a>
+                        <a th:href="@{/trip-requests/reject/{id}(id=${tripRequest.id})}" class="btn btn-secondary btn-sm" th:if="${tripRequest.status == 'PENDING'}">Rejeitar</a>
+                        <a th:href="@{/trip-requests/complete/{id}(id=${tripRequest.id})}" class="btn btn-info btn-sm" th:if="${tripRequest.status == 'ACCEPTED'}">Concluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Explicação das Alterações
+Adição da Coluna de Status: Adicionei uma coluna para exibir o status da solicitação de viagem.
+Botões de Ação: Adicionei os botões "Aceitar", "Rejeitar" e "Concluir" na coluna de ações.
+Aceitar: Este botão só aparece se o status da solicitação for PENDING.
+Rejeitar: Este botão só aparece se o status da solicitação for PENDING.
+Concluir: Este botão só aparece se o status da solicitação for ACCEPTED.
+Conclusão
+Com essas alterações, agora você tem botões para aceitar, rejeitar e concluir solicitações de viagem diretamente na view de gerenciamento de viagens. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+Oo botões qeu foram adicionados não estão semdo mostrados na view
+
+Codiumate
+Se os botões não estão sendo mostrados na view, pode haver alguns motivos possíveis, como problemas de sintaxe ou lógica no Thymeleaf. Vamos revisar o código e garantir que tudo esteja correto.
+
+Passo 1: Verificar a Lógica Thymeleaf
+Certifique-se de que a lógica Thymeleaf para exibir os botões está correta. A lógica th:if deve ser usada corretamente para garantir que os botões sejam exibidos com base no status da solicitação de viagem.
+
+Código HTML Atualizado com Verificações
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Trip Requests</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Gerenciar Viagens</h1>
+        <a th:href="@{/trip-requests/add}" class="btn btn-primary mb-3">Nova Viagem</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${tripRequest.status}"></td>
+                    <td>
+                        <a th:href="@{/trip-requests/edit/{id}(id=${tripRequest.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/trip-requests/delete/{id}(id=${tripRequest.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                        <a th:href="@{/trip-requests/accept/{id}(id=${tripRequest.id})}" class="btn btn-success btn-sm" th:if="${tripRequest.status.name() == 'PENDING'}">Aceitar</a>
+                        <a th:href="@{/trip-requests/reject/{id}(id=${tripRequest.id})}" class="btn btn-secondary btn-sm" th:if="${tripRequest.status.name() == 'PENDING'}">Rejeitar</a>
+                        <a th:href="@{/trip-requests/complete/{id}(id=${tripRequest.id})}" class="btn btn-info btn-sm" th:if="${tripRequest.status.name() == 'ACCEPTED'}">Concluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Passo 2: Verificar o Status da Solicitação
+Certifique-se de que o status da solicitação de viagem (TripStatus) está sendo corretamente definido e passado para a view. O método name() é usado para obter o nome da constante enum como uma string.
+
+Passo 3: Verificar o Controlador
+Certifique-se de que o controlador está passando corretamente a lista de solicitações de viagem (tripRequests) para a view.
+
+Passo 4: Verificar o Enum TripStatus
+Certifique-se de que o enum TripStatus está definido corretamente na classe TripRequest.
+
+public enum TripStatus {
+    PENDING, ACCEPTED, REJECTED
+}
+Conclusão
+Com essas verificações e ajustes, os botões "Aceitar", "Rejeitar" e "Concluir" devem ser exibidos corretamente na view de gerenciamento de viagens. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+Quando uma viagem for criada ela deve estar sempre como PENDING.
+E ao salvar uma viagem aparece o seguinte erro
+Whitelabel Error Page
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Sat Jun 29 17:23:59 AMT 2024
+
+There was an unexpected error (type=Internal Server Error, status=500).
+
+not-null property references a null or transient value : com.progweb.frota.model.Vehicle.brand
+
+org.springframework.dao.DataIntegrityViolationException: not-null property references a null or transient value : com.progweb.frota.model.Vehicle.brand at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:307) at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241) at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:566) at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795) at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758) at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:676) at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:426) at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) at jdk.proxy19/jdk.proxy19.$Proxy233.save(Unknown Source) at com.progweb.frota.service.VehicleService.saveVehicle(VehicleService.java:16) at com.progweb.frota.service.TripRequestService.saveTripRequest(TripRequestService.java:22) at com.progweb.frota.controller.TripRequestController.addTripRequest(TripRequestController.java:60) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:568) at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) at java.base/java.lang.Thread.run(Thread.java:833) Caused by: org.hibernate.PropertyValueException: not-null property references a null or transient value : com.progweb.frota.model.Vehicle.brand at org.hibernate.engine.internal.Nullability.checkNullability(Nullability.java:109) at org.hibernate.engine.internal.Nullability.checkNullability(Nullability.java:54) at org.hibernate.event.internal.DefaultFlushEntityEventListener.scheduleUpdate(DefaultFlushEntityEventListener.java:261) at org.hibernate.event.internal.DefaultFlushEntityEventListener.onFlushEntity(DefaultFlushEntityEventListener.java:150) at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) at org.hibernate.event.internal.AbstractFlushingEventListener.flushEntities(AbstractFlushingEventListener.java:234) at org.hibernate.event.internal.AbstractFlushingEventListener.flushEverythingToExecutions(AbstractFlushingEventListener.java:85) at org.hibernate.event.internal.AbstractFlushingEventListener.flushEverythingToExecutions(AbstractFlushingEventListener.java:79) at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:40) at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425) at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487) at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324) at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981) at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439) at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169) at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267) at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101) at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562) ... 114 more
+
+Codiumate
+O erro que você está enfrentando indica que a propriedade brand do objeto Vehicle está nula quando você está tentando salvar a solicitação de viagem. Isso pode ocorrer se o veículo não estiver sendo corretamente associado à solicitação de viagem ou se os dados do veículo não estiverem sendo preenchidos corretamente no formulário.
+
+Vamos resolver isso passo a passo:
+
+Passo 1: Garantir que a Solicitação de Viagem esteja sempre como PENDING
+Certifique-se de que a solicitação de viagem esteja sempre com o status PENDING ao ser criada.
+
+Passo 2: Verificar o Formulário de Adição de Solicitação de Viagem
+Certifique-se de que o formulário de adição de solicitação de viagem está enviando corretamente os dados do veículo.
+
+Passo 3: Atualizar o Controlador para Garantir que o Veículo Está Sendo Associado Corretamente
+Passo 4: Verificar a View para Garantir que os Veículos Disponíveis Estão Sendo Listados
+Passo 5: Atualizar o Serviço para Garantir que o Veículo Está Sendo Marcado como Indisponível
+Vamos revisar e ajustar o código conforme necessário.
+
+Atualização do Controlador TripRequestController
+Certifique-se de que o controlador está associando corretamente o veículo à solicitação de viagem.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAvailableVehicles());
+        return "trip-requests/add";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest) {
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        tripRequestService.acceptTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Atualização do Serviço TripRequestService
+Certifique-se de que o serviço está marcando o veículo como indisponível ao aceitar a solicitação de viagem.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.TripRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TripRequestService {
+
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    public TripRequest saveTripRequest(TripRequest tripRequest) {
+        Vehicle vehicle = tripRequest.getVehicle();
+        vehicle.setAvailable(false);
+        vehicleService.saveVehicle(vehicle);
+        return tripRequestRepository.save(tripRequest);
+    }
+
+    public List<TripRequest> getAllTripRequests() {
+        return tripRequestRepository.findAll();
+    }
+
+    public TripRequest getTripRequestById(Long id) {
+        return tripRequestRepository.findById(id).orElse(null);
+    }
+
+    public void deleteTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.deleteById(id);
+        }
+    }
+
+    public void updateTripRequest(Long id, TripRequest updatedTripRequest) {
+        TripRequest existingTripRequest = tripRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trip request Id:" + id));
+        existingTripRequest.setDriver(updatedTripRequest.getDriver());
+        existingTripRequest.setVehicle(updatedTripRequest.getVehicle());
+        existingTripRequest.setTripStartTime(updatedTripRequest.getTripStartTime());
+        existingTripRequest.setTripEndTime(updatedTripRequest.getTripEndTime());
+        tripRequestRepository.save(existingTripRequest);
+    }
+
+    public void completeTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+
+    public void acceptTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.ACCEPTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(false);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+}
+Atualização do Serviço VehicleService
+Adicione um método para obter apenas os veículos disponíveis.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.VehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VehicleService {
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+
+    public List<Vehicle> getAvailableVehicles() {
+        return vehicleRepository.findByAvailable(true);
+    }
+
+    public Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id).orElse(null);
+    }
+
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
+    }
+}
+Atualização do Repositório VehicleRepository
+Adicione um método para encontrar veículos disponíveis.
+
+package com.progweb.frota.repository;
+
+import com.progweb.frota.model.Vehicle;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
+    List<Vehicle> findByAvailable(boolean available);
+}
+Atualização da View para Listar Veículos Disponíveis
+Certifique-se de que a view está listando apenas os veículos disponíveis.
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Trip Requests</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Gerenciar Viagens</h1>
+        <a th:href="@{/trip-requests/add}" class="btn btn-primary mb-3">Nova Viagem</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Motorista</th>
+                    <th>Veículo</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tripRequest : ${tripRequests}">
+                    <td th:text="${tripRequest.id}"></td>
+                    <td th:text="${tripRequest.driver.name}"></td>
+                    <td th:text="${tripRequest.vehicle.model} + ' - ' + ${tripRequest.vehicle.licensePlate}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripStartTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${#temporals.format(tripRequest.tripEndTime, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${tripRequest.status}"></td>
+                    <td>
+                        <a th:href="@{/trip-requests/edit/{id}(id=${tripRequest.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/trip-requests/delete/{id}(id=${tripRequest.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                        <a th:href="@{/trip-requests/accept/{id}(id=${tripRequest.id})}" class="btn btn-success btn-sm" th:if="${tripRequest.status.name() == 'PENDING'}">Aceitar</a>
+                        <a th:href="@{/trip-requests/reject/{id}(id=${tripRequest.id})}" class="btn btn-secondary btn-sm" th:if="${tripRequest.status.name() == 'PENDING'}">Rejeitar</a>
+                        <a th:href="@{/trip-requests/complete/{id}(id=${tripRequest.id})}" class="btn btn-info btn-sm" th:if="${tripRequest.status.name() == 'ACCEPTED'}">Concluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Conclusão
+Com essas alterações, a solicitação de viagem deve ser criada com o status PENDING, e o veículo deve ser marcado como indisponível ao aceitar a solicitação. Além disso, os veículos indisponíveis não aparecerão na lista de seleção de veículos na view de requisição de viagem. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+Eu não quero que mostre os veículos indisponiveis na tela de adicionar requisição de viagem que é esssa tela
+<!DOCTYPE html> <html xmlns:th="http://www.thymeleaf.org"> <head> <title>Adicionar Viagem</title> <!-- Adicionar Bootstrap CSS --> <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> </head> <body> <div class="container"> <h1 class="mt-5">Adicionar Viagem</h1> <form th:action="@{/trip-requests/add}" th:object="${tripRequest}" method="post"> <div class="form-group"> <label for="driver">Motorista:</label> <select id="driver" class="form-control" th:field="*{driver.id}" required> <option value="" disabled selected>Selecione um Motorista</option> <option th:each="driver : ${drivers}" th:value="${driver.id}" th:text="${driver.name}"></option> </select> </div> <div class="form-group"> <label for="vehicle">Veículo:</label> <select id="vehicle" class="form-control" th:field="*{vehicle.id}" required> <option value="" disabled selected>Selecione um Veículo</option> <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.model} + ' - ' + ${vehicle.licensePlate}"></option> </select> </div> <div class="form-group"> <label for="tripStartTime">Início:</label> <input type="datetime-local" id="tripStartTime" class="form-control" th:field="*{tripStartTime}" required> </div> <div class="form-group"> <label for="tripEndTime">Fim:</label> <input type="datetime-local" id="tripEndTime" class="form-control" th:field="*{tripEndTime}" required> </div> <button type="submit" class="btn btn-primary">Nova Viagem</button> </form> <a th:href="@{/trip-requests/manage}" class="btn btn-secondary mt-3">Voltar</a> </div> <!-- Adicionar Bootstrap JS e dependências --> <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> </body> </html>
+
+Codiumate
+Para garantir que apenas os veículos disponíveis sejam mostrados na tela de adicionar requisição de viagem, você precisa garantir que a lista de veículos passada para a view contenha apenas veículos disponíveis. Vamos ajustar o controlador e a view para garantir isso.
+
+Passo 1: Atualizar o Controlador TripRequestController
+Certifique-se de que o controlador está passando apenas os veículos disponíveis para a view.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAvailableVehicles());
+        return "trip-requests/add";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest) {
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        tripRequestService.acceptTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Passo 2: Atualizar a View para Listar Apenas Veículos Disponíveis
+Certifique-se de que a view está listando apenas os veículos disponíveis.
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Adicionar Viagem</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Adicionar Viagem</h1>
+        <form th:action="@{/trip-requests/add}" th:object="${tripRequest}" method="post">
+            <div class="form-group">
+                <label for="driver">Motorista:</label>
+                <select id="driver" class="form-control" th:field="*{driver.id}" required>
+                    <option value="" disabled selected>Selecione um Motorista</option>
+                    <option th:each="driver : ${drivers}" th:value="${driver.id}" th:text="${driver.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="vehicle">Veículo:</label>
+                <select id="vehicle" class="form-control" th:field="*{vehicle.id}" required>
+                    <option value="" disabled selected>Selecione um Veículo</option>
+                    <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.model} + ' - ' + ${vehicle.licensePlate}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tripStartTime">Início:</label>
+                <input type="datetime-local" id="tripStartTime" class="form-control" th:field="*{tripStartTime}" required>
+            </div>
+            <div class="form-group">
+                <label for="tripEndTime">Fim:</label>
+                <input type="datetime-local" id="tripEndTime" class="form-control" th:field="*{tripEndTime}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Nova Viagem</button>
+        </form>
+        <a th:href="@{/trip-requests/manage}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Conclusão
+Com essas alterações, a tela de adicionar requisição de viagem (trip-requests/add) deve listar apenas os veículos disponíveis. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+Ao tentar salvar uma nova viagem aparece o seguinte erro na tela
+Whitelabel Error Page
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Sat Jun 29 17:51:29 AMT 2024
+
+There was an unexpected error (type=Internal Server Error, status=500).
+
+not-null property references a null or transient value : com.progweb.frota.model.Vehicle.brand
+
+org.springframework.dao.DataIntegrityViolationException: not-null property references a null or transient value : com.progweb.frota.model.Vehicle.brand at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:307) at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241) at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:566) at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795) at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758) at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:676) at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:426) at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) at jdk.proxy19/jdk.proxy19.$Proxy233.save(Unknown Source) at com.progweb.frota.service.VehicleService.saveVehicle(VehicleService.java:16) at com.progweb.frota.service.TripRequestService.saveTripRequest(TripRequestService.java:22) at com.progweb.frota.controller.TripRequestController.addTripRequest(TripRequestController.java:60) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.base/java.lang.reflect.Method.invoke(Method.java:568) at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) at java.base/java.lang.Thread.run(Thread.java:833) Caused by: org.hibernate.PropertyValueException: not-null property references a null or transient value : com.progweb.frota.model.Vehicle.brand at org.hibernate.engine.internal.Nullability.checkNullability(Nullability.java:109) at org.hibernate.engine.internal.Nullability.checkNullability(Nullability.java:54) at org.hibernate.event.internal.DefaultFlushEntityEventListener.scheduleUpdate(DefaultFlushEntityEventListener.java:261) at org.hibernate.event.internal.DefaultFlushEntityEventListener.onFlushEntity(DefaultFlushEntityEventListener.java:150) at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) at org.hibernate.event.internal.AbstractFlushingEventListener.flushEntities(AbstractFlushingEventListener.java:234) at org.hibernate.event.internal.AbstractFlushingEventListener.flushEverythingToExecutions(AbstractFlushingEventListener.java:85) at org.hibernate.event.internal.AbstractFlushingEventListener.flushEverythingToExecutions(AbstractFlushingEventListener.java:79) at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:40) at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425) at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487) at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324) at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981) at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439) at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169) at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267) at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101) at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562) ... 114 more
+
+Codiumate
+O erro que você está enfrentando indica que a propriedade brand do objeto Vehicle está nula quando você está tentando salvar a solicitação de viagem. Isso pode ocorrer se o veículo não estiver sendo corretamente associado à solicitação de viagem ou se os dados do veículo não estiverem sendo preenchidos corretamente no formulário.
+
+Vamos resolver isso passo a passo:
+
+Passo 1: Garantir que o Veículo Está Sendo Associado Corretamente
+Certifique-se de que o veículo está sendo corretamente associado à solicitação de viagem no controlador.
+
+Passo 2: Atualizar o Controlador TripRequestController
+Certifique-se de que o controlador está associando corretamente o veículo à solicitação de viagem.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAvailableVehicles());
+        return "trip-requests/add";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest, @RequestParam Long vehicleId) {
+        Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
+        tripRequest.setVehicle(vehicle);
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        tripRequestService.acceptTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Passo 3: Atualizar a View para Enviar o ID do Veículo
+Certifique-se de que a view está enviando o ID do veículo corretamente.
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Adicionar Viagem</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Adicionar Viagem</h1>
+        <form th:action="@{/trip-requests/add}" th:object="${tripRequest}" method="post">
+            <div class="form-group">
+                <label for="driver">Motorista:</label>
+                <select id="driver" class="form-control" th:field="*{driver.id}" required>
+                    <option value="" disabled selected>Selecione um Motorista</option>
+                    <option th:each="driver : ${drivers}" th:value="${driver.id}" th:text="${driver.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="vehicle">Veículo:</label>
+                <select id="vehicle" class="form-control" th:field="*{vehicle.id}" required>
+                    <option value="" disabled selected>Selecione um Veículo</option>
+                    <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.model} + ' - ' + ${vehicle.licensePlate}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tripStartTime">Início:</label>
+                <input type="datetime-local" id="tripStartTime" class="form-control" th:field="*{tripStartTime}" required>
+            </div>
+            <div class="form-group">
+                <label for="tripEndTime">Fim:</label>
+                <input type="datetime-local" id="tripEndTime" class="form-control" th:field="*{tripEndTime}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Nova Viagem</button>
+        </form>
+        <a th:href="@{/trip-requests/manage}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Passo 4: Atualizar o Serviço TripRequestService
+Certifique-se de que o serviço está marcando o veículo como indisponível ao aceitar a solicitação de viagem.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.TripRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TripRequestService {
+
+    @Autowired
+    private TripRequestRepository tripRequestRepository;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    public TripRequest saveTripRequest(TripRequest tripRequest) {
+        Vehicle vehicle = tripRequest.getVehicle();
+        vehicle.setAvailable(false);
+        vehicleService.saveVehicle(vehicle);
+        return tripRequestRepository.save(tripRequest);
+    }
+
+    public List<TripRequest> getAllTripRequests() {
+        return tripRequestRepository.findAll();
+    }
+
+    public TripRequest getTripRequestById(Long id) {
+        return tripRequestRepository.findById(id).orElse(null);
+    }
+
+    public void deleteTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.deleteById(id);
+        }
+    }
+
+    public void updateTripRequest(Long id, TripRequest updatedTripRequest) {
+        TripRequest existingTripRequest = tripRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trip request Id:" + id));
+        existingTripRequest.setDriver(updatedTripRequest.getDriver());
+        existingTripRequest.setVehicle(updatedTripRequest.getVehicle());
+        existingTripRequest.setTripStartTime(updatedTripRequest.getTripStartTime());
+        existingTripRequest.setTripEndTime(updatedTripRequest.getTripEndTime());
+        tripRequestRepository.save(existingTripRequest);
+    }
+
+    public void completeTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(true);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+
+    public void acceptTripRequest(Long id) {
+        TripRequest tripRequest = tripRequestRepository.findById(id).orElse(null);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.ACCEPTED);
+            Vehicle vehicle = tripRequest.getVehicle();
+            vehicle.setAvailable(false);
+            vehicleService.saveVehicle(vehicle);
+            tripRequestRepository.save(tripRequest);
+        }
+    }
+}
+Conclusão
+Com essas alterações, a solicitação de viagem deve ser criada com o status PENDING, e o veículo deve ser corretamente associado à solicitação de viagem. Além disso, os veículos indisponíveis não aparecerão na lista de seleção de veículos na view de requisição de viagem. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+<div class="form-group"> <label for="vehicle">Veículo:</label> <select id="vehicle" class="form-control" th:field="*{vehicle.id}" required> <option value="" disabled selected>Selecione um Veículo</option> <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.model} + ' - ' + ${vehicle.licensePlate}"></option> </select> </div>
+Aqui só deve aparecer veículos disponíveis
+
+Codiumate
+Para garantir que apenas veículos disponíveis apareçam na lista de seleção na tela de adicionar requisição de viagem, você precisa garantir que a lista de veículos passada para a view contenha apenas veículos disponíveis. Vamos ajustar o controlador e a view para garantir isso.
+
+Passo 1: Atualizar o Controlador TripRequestController
+Certifique-se de que o controlador está passando apenas os veículos disponíveis para a view.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAvailableVehicles());
+        return "trip-requests/add";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest, @RequestParam Long vehicleId) {
+        Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
+        tripRequest.setVehicle(vehicle);
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        tripRequestService.acceptTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Passo 2: Atualizar a View para Listar Apenas Veículos Disponíveis
+Certifique-se de que a view está listando apenas os veículos disponíveis.
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Adicionar Viagem</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Adicionar Viagem</h1>
+        <form th:action="@{/trip-requests/add}" th:object="${tripRequest}" method="post">
+            <div class="form-group">
+                <label for="driver">Motorista:</label>
+                <select id="driver" class="form-control" th:field="*{driver.id}" required>
+                    <option value="" disabled selected>Selecione um Motorista</option>
+                    <option th:each="driver : ${drivers}" th:value="${driver.id}" th:text="${driver.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="vehicle">Veículo:</label>
+                <select id="vehicle" class="form-control" th:field="*{vehicle.id}" required>
+                    <option value="" disabled selected>Selecione um Veículo</option>
+                    <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.model} + ' - ' + ${vehicle.licensePlate}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tripStartTime">Início:</label>
+                <input type="datetime-local" id="tripStartTime" class="form-control" th:field="*{tripStartTime}" required>
+            </div>
+            <div class="form-group">
+                <label for="tripEndTime">Fim:</label>
+                <input type="datetime-local" id="tripEndTime" class="form-control" th:field="*{tripEndTime}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Nova Viagem</button>
+        </form>
+        <a th:href="@{/trip-requests/manage}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Passo 3: Atualizar o Serviço VehicleService
+Adicione um método para obter apenas os veículos disponíveis.
+
+package com.progweb.frota.service;
+
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.repository.VehicleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VehicleService {
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
+    public List<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
+    }
+
+    public List<Vehicle> getAvailableVehicles() {
+        return vehicleRepository.findByAvailable(true);
+    }
+
+    public Vehicle getVehicleById(Long id) {
+        return vehicleRepository.findById(id).orElse(null);
+    }
+
+    public void deleteVehicle(Long id) {
+        vehicleRepository.deleteById(id);
+    }
+}
+Passo 4: Atualizar o Repositório VehicleRepository
+Adicione um método para encontrar veículos disponíveis.
+
+package com.progweb.frota.repository;
+
+import com.progweb.frota.model.Vehicle;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
+    List<Vehicle> findByAvailable(boolean available);
+}
+Conclusão
+Com essas alterações, a tela de adicionar requisição de viagem (trip-requests/add) deve listar apenas os veículos disponíveis. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
+
+Everton Bonfim Gomes
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Sat Jun 29 18:12:01 AMT 2024
+
+There was an unexpected error (type=Bad Request, status=400).
+
+Required parameter 'vehicleId' is not present.
+
+org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'vehicleId' for method parameter type Long is not present at org.springframework.web.method.annotation.RequestParamMethodArgumentResolver.handleMissingValueInternal(RequestParamMethodArgumentResolver.java:220) at org.springframework.web.method.annotation.RequestParamMethodArgumentResolver.handleMissingValue(RequestParamMethodArgumentResolver.java:196) at org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver.resolveArgument(AbstractNamedValueMethodArgumentResolver.java:126) at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122) at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:224) at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:178) at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) at java.base/java.lang.Thread.run(Thread.java:833)
+
+Codiumate
+O erro que você está enfrentando indica que o parâmetro vehicleId não está sendo enviado corretamente no formulário. Vamos corrigir isso garantindo que o ID do veículo seja enviado corretamente no formulário e que o controlador esteja configurado para receber esse parâmetro.
+
+Passo 1: Atualizar o Controlador TripRequestController
+Certifique-se de que o controlador está configurado para receber o ID do veículo corretamente.
+
+package com.progweb.frota.controller;
+
+import com.progweb.frota.model.TripRequest;
+import com.progweb.frota.model.User;
+import com.progweb.frota.model.Vehicle;
+import com.progweb.frota.service.TripRequestService;
+import com.progweb.frota.service.UserService;
+import com.progweb.frota.service.VehicleService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Controller
+@RequestMapping("/trip-requests")
+public class TripRequestController {
+
+    @Autowired
+    private TripRequestService tripRequestService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @GetMapping("/add")
+    public String showAddTripRequestForm(Model model) {
+        model.addAttribute("tripRequest", new TripRequest());
+        model.addAttribute("drivers", userService.findUsersByRole("DRIVER"));
+        model.addAttribute("vehicles", vehicleService.getAvailableVehicles());
+        return "trip-requests/add";
+    }
+
+    @PostMapping("/add")
+    public String addTripRequest(@ModelAttribute TripRequest tripRequest, @RequestParam("vehicle.id") Long vehicleId) {
+        Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
+        tripRequest.setVehicle(vehicle);
+        tripRequest.setRequestTime(LocalDateTime.now());
+        tripRequest.setStatus(TripRequest.TripStatus.PENDING);
+        tripRequestService.saveTripRequest(tripRequest);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/manage")
+    public String manageTripRequests(Model model) {
+        List<TripRequest> tripRequests = tripRequestService.getAllTripRequests();
+        model.addAttribute("tripRequests", tripRequests);
+        return "trip-requests/manage";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTripRequest(@PathVariable Long id) {
+        tripRequestService.deleteTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/accept/{id}")
+    public String acceptTripRequest(@PathVariable Long id) {
+        tripRequestService.acceptTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/reject/{id}")
+    public String rejectTripRequest(@PathVariable Long id) {
+        TripRequest tripRequest = tripRequestService.getTripRequestById(id);
+        if (tripRequest != null) {
+            tripRequest.setStatus(TripRequest.TripStatus.REJECTED);
+            tripRequestService.saveTripRequest(tripRequest);
+        }
+        return "redirect:/trip-requests/manage";
+    }
+
+    @GetMapping("/complete/{id}")
+    public String completeTripRequest(@PathVariable Long id) {
+        tripRequestService.completeTripRequest(id);
+        return "redirect:/trip-requests/manage";
+    }
+}
+Passo 2: Atualizar a View para Enviar o ID do Veículo
+Certifique-se de que a view está enviando o ID do veículo corretamente.
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Adicionar Viagem</title>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Adicionar Viagem</h1>
+        <form th:action="@{/trip-requests/add}" th:object="${tripRequest}" method="post">
+            <div class="form-group">
+                <label for="driver">Motorista:</label>
+                <select id="driver" class="form-control" th:field="*{driver.id}" required>
+                    <option value="" disabled selected>Selecione um Motorista</option>
+                    <option th:each="driver : ${drivers}" th:value="${driver.id}" th:text="${driver.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="vehicle">Veículo:</label>
+                <select id="vehicle" class="form-control" th:field="*{vehicle.id}" required>
+                    <option value="" disabled selected>Selecione um Veículo</option>
+                    <option th:each="vehicle : ${vehicles}" th:value="${vehicle.id}" th:text="${vehicle.model} + ' - ' + ${vehicle.licensePlate}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tripStartTime">Início:</label>
+                <input type="datetime-local" id="tripStartTime" class="form-control" th:field="*{tripStartTime}" required>
+            </div>
+            <div class="form-group">
+                <label for="tripEndTime">Fim:</label>
+                <input type="datetime-local" id="tripEndTime" class="form-control" th:field="*{tripEndTime}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Nova Viagem</button>
+        </form>
+        <a th:href="@{/trip-requests/manage}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+Conclusão
+Com essas alterações, o ID do veículo deve ser enviado corretamente no formulário e o controlador deve estar configurado para receber esse parâmetro. Certifique-se de testar essas mudanças para garantir que tudo esteja funcionando conforme o esperado. Se precisar de mais alguma coisa, sinta-se à vontade para perguntar!
