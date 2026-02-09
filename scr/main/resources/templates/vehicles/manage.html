@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gerenciar Veículos</title>
+    <script type="text/javascript">
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <!-- Adicionar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Gerenciar Veículos</h1>
+        <a th:href="@{/vehicles/add}" class="btn btn-primary mb-3">Adicionar Veículo</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Placa</th>
+                    <th>Disponível</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="vehicle : ${vehicles}">
+                    <td th:text="${vehicle.id}"></td>
+                    <td th:text="${vehicle.brand}"></td>
+                    <td th:text="${vehicle.model}"></td>
+                    <td th:text="${vehicle.licensePlate}"></td>
+                    <td th:text="${vehicle.available ? 'Yes' : 'No'}"></td>
+                    <td>
+                        <a th:href="@{/vehicles/edit/{id}(id=${vehicle.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/vehicles/delete/{id}(id=${vehicle.id})}" class="btn btn-danger btn-sm">Deletar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/admin}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+
+    <!-- Adicionar Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
